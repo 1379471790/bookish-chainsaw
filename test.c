@@ -2,7 +2,7 @@
 #include "usr.h"
 
 int main(){
-	head_fri = kl_init(); // 存储好友信息
+	head_fri = kl_init(); // 存储好友列表
 
 
 	int tcp_fd;

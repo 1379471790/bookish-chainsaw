@@ -5,7 +5,51 @@
 // #include <stdlib.h>
 
 void *routine(void *arg){
+    int tcp_fd=*((int *)arg);
+    char msg[100]={0};          //储存好友发来的消息（申请好友，消息）
 
+    usr_log_msg fri_info;       //储存好友信息
+
+    while (1)
+    {   
+        memset(msg,0,100);
+        //接收服务器端消息
+        recv(tcp_fd,msg,100,0);
+        if(strncmp(msg,"add_fri",7)==0){   //有添加好友消息
+            if(strncmp(msg,"add_fri",7)==0){
+                int tmp;
+                // memset(msg,0,100);
+                sscanf(msg+strlen("add_fri "),"%d %s",&fri_info.id,fri_info.name);
+                printf("用户%s申请添加你为好友\n",fri_info.name);
+                printf("输入1同意，2拒绝\n");     
+                scanf("%d",&tmp);
+                switch (tmp)
+                {
+                case 1 :
+                    kl_add(fri_info,head_fri);
+                    memset(msg,0,100);
+                    sprintf(msg, "gnome-terminal -- bash -c 'echo \"\n\t好友%d-%s已经同意您的好友请求！\n\";exec bash'", fri_info.id, fri_info.name);
+				    system(msg);
+                    printf("adasdasd\n");
+                    break;
+
+                case 2 :
+                    break;  
+
+                default:
+                    continue;
+                }
+            }
+
+
+
+
+            
+        }else if(strncmp(msg,"chat",4)==0){
+            printf("聊天\n");
+        }
+    }
+    
 }
 
 
@@ -79,10 +123,6 @@ int add_friend(int tcp_fd){
 	scanf("%d", &id);while(getchar()!='\n');
     node *ret = kl_show_fri(head_fri, "find_id", id);
     
-    // usr_log_msg new;
-    // new.id=54091939;
-    // strcpy(new.name,"zxc");
-    // kl_add(new,head_fri);
     
 	if(ret!=NULL)
 	{
@@ -96,7 +136,6 @@ int add_friend(int tcp_fd){
         //申请好友信息发给服务器
 	    send(tcp_fd,&(ret->data), sizeof(*ret), 0);
         // write(tcp_fd,&(ret->data),sizeof(*ret));
-        printf("1111\n");
     }
     
 

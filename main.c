@@ -101,33 +101,33 @@ int main(){
                             send(socket_fd,"nouser",6,0);
                         }else if((find->data.id==new_usr->data.id)&&(strcmp(find->data.pwd,new_usr->data.pwd)==0)){
                             new_usr->data.sign=ON_LINE;
+                            strcpy(new_usr->data.name,find->data.name);
                             new_usr->data.con_fd=socket_fd;
-                            printf("又在denglu?\n");
+                            kl_add(new_usr->data,client_on_list);  //登录成功，加入在线链表
                             send(socket_fd,"right",6,0);
                         }else
                             send(socket_fd,"no_co",6,0);
                         //好友申请
                     }else if(new_usr->data.sign==APPLY){
-                        printf("有好友申请0000\n");
                         //查询发送好友申请的用户
     					node *client_now = kl_show_fri(client_all_list, "find_sock", socket_fd); 
                         
                         printf("有好友申请\n");
                         int  id=new_usr->data.id;
                         //查询该id
-                        node *apply=kl_show_fri(client_all_list,"find_id",id);
+                        node *apply=kl_show_fri(client_on_list,"find_id",id);
+                        printf("%d\n",id);
                         if(apply==NULL){
-                            printf("无此id\n"); 
-                        }else if(apply->data.sign==OFF_LINE){
-                            printf("该用户不在线\n");
-                        }else if(apply->data.sign==ON_LINE){
+                            printf("该用户不在线\n"); 
+                        }else{
                             char buf[100]={0};
-                            memset(buf, 0, 1024);
-						    sprintf(buf, "add_fri wait %d %s", client_now->data.id, client_now->data.name);
+                            memset(buf, 0, 100);
+						    sprintf(buf, "add_fri %d %s", apply->data.id, apply->data.name);
                             send(apply->data.con_fd,buf,strlen(buf),0);
-                            printf("以向该用户发送请求\n");
-                            printf("%s\n",buf);
-                        }
+                            printf("已向该用户发送请求,msg=%s\n",buf);
+                        } 
+                        
+                        
                     }
             }
 
