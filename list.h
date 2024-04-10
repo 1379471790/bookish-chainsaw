@@ -13,8 +13,11 @@
 #include <sys/socket.h>
 #include <sys/epoll.h>
 #include <signal.h>
+#include <fcntl.h>
 #include <pthread.h>
 #include "./libs/sqlite3.h"
+
+#define FIFO_PATH "/home/gec/my_fifo"
 
 #define APPLY   4	//申请加好友
 #define LOGIN 	3  	//登录
@@ -31,6 +34,7 @@ typedef struct login
 	struct sockaddr_in c_addr;
 	int con_fd;
 	sqlite3 *db; // 数据库句柄
+	char msg[100];
 }usr_log_msg;
 
 

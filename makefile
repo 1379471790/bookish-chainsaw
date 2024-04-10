@@ -7,6 +7,9 @@ test:network/tcp.c usr.c list.c
 arm:network/tcp.c usr.c
 	arm-linux-gcc -o arm test.c network/tcp.c usr.c
 
+shell:
+	gcc  shell.c -o shell 
+
 send1:
 	scp main root@8.136.117.209:/root/project
 send2:

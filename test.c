@@ -1,11 +1,29 @@
 #include "network/net.h"
 #include "usr.h"
 
+
+	int tcp_fd;
+
+
+//捕获信号并获取数据(加好友)
+void fun(int sig,siginfo_t *sig_struct, void *sigp){
+	usr_log_msg add;
+	memset(&add,0,sizeof(add));
+	if(sig==10){
+		strcpy(add.msg,"add_friend agree");
+		add.id=sig_struct->si_int;
+		send(tcp_fd,&add,sizeof(add),0);
+	}else if(sig==12){
+		strcpy(add.msg,"add_friend disagree");
+		add.id=sig_struct->si_int;
+		send(tcp_fd,&add,sizeof(add),0);
+	}
+}
+
 int main(){
 	head_fri = kl_init(); // 存储好友列表
 
 
-	int tcp_fd;
 	get_client_fd(&tcp_fd);
     char buf[100]={0};
 	//登录注册
@@ -13,6 +31,13 @@ int main(){
 	// 登录成功后，开启线程
 	pthread_t tid;
 	pthread_create(&tid, NULL, routine, (void *)&tcp_fd);
+
+	//开启信号捕捉
+	struct sigaction my_act;
+	my_act.sa_flags=SA_SIGINFO;
+	my_act.sa_sigaction = fun; //响应函数
+	sigaction(10, &my_act, NULL);
+	sigaction(12, &my_act, NULL);
 
     while(1){
 		// 登录成功后，具体功能

@@ -120,14 +120,21 @@ int main(){
                         if(apply==NULL){
                             printf("该用户不在线\n"); 
                         }else{
-                            char buf[100]={0};
-                            memset(buf, 0, 100);
-						    sprintf(buf, "add_fri %d %s", apply->data.id, apply->data.name);
+                            char buf[200]={0};
+                            memset(buf, 0, 200);
+						    sprintf(buf, "add_fri add %d %s", apply->data.id, apply->data.name);
                             send(apply->data.con_fd,buf,strlen(buf),0);
                             printf("已向该用户发送请求,msg=%s\n",buf);
                         } 
                         
                         
+                    }else if(strncmp(new_usr->data.msg,"add_friend",sizeof("add_friend"))==0){        //添加好友
+                        printf("addfriend\n");
+                        if(strcmp(new_usr->data.msg+sizeof("add_friend "),"agree")==0){
+                            printf("agree\n");
+                        }else if(strcmp(new_usr->data.msg+sizeof("add_friend "),"disagree")==0){
+                            printf("disagree\n");
+                        }
                     }
             }
 

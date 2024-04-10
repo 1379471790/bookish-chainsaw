@@ -4,7 +4,11 @@
 // #include <string.h>
 // #include <stdlib.h>
 
+
+
 void *routine(void *arg){
+    
+
     int tcp_fd=*((int *)arg);
     char msg[100]={0};          //储存好友发来的消息（申请好友，消息）
 
@@ -13,40 +17,18 @@ void *routine(void *arg){
     while (1)
     {   
         memset(msg,0,100);
+            printf("%s\n",msg);
         //接收服务器端消息
         recv(tcp_fd,msg,100,0);
         if(strncmp(msg,"add_fri",7)==0){   //有添加好友消息
-            if(strncmp(msg,"add_fri",7)==0){
-                int tmp;
-                // memset(msg,0,100);
-                sscanf(msg+strlen("add_fri "),"%d %s",&fri_info.id,fri_info.name);
-                printf("用户%s申请添加你为好友\n",fri_info.name);
-                printf("输入1同意，2拒绝\n");     
-                scanf("%d",&tmp);
-                switch (tmp)
-                {
-                case 1 :
-                    kl_add(fri_info,head_fri);
-                    memset(msg,0,100);
-                    sprintf(msg, "gnome-terminal -- bash -c 'echo \"\n\t好友%d-%s已经同意您的好友请求！\n\";exec bash'", fri_info.id, fri_info.name);
-				    system(msg);
-                    printf("adasdasd\n");
-                    break;
+            if(strncmp(msg+strlen("add_fri "),"add",3)==0){
+                sscanf(msg+strlen("add_fri add "),"%d %s",&fri_info.id,fri_info.name);
 
-                case 2 :
-                    break;  
+                memset(msg,0,100);
+                sprintf(msg, "gnome-terminal -- bash -c './shell.sh %d %s %d %s;exec bash'", fri_info.id, fri_info.name, getpid(), "add");
+				system(msg);
 
-                default:
-                    continue;
-                }
             }
-
-
-
-
-            
-        }else if(strncmp(msg,"chat",4)==0){
-            printf("聊天\n");
         }
     }
     
